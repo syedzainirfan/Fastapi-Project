@@ -1,0 +1,31 @@
+# Import FastAPI class from fastapi package
+from fastapi import FastAPI
+
+# Create FastAPI application instance
+# This variable represents your web app
+app = FastAPI()
+
+# Example database (Replace this with your real database later)
+# Here we are just using a sample variable for demonstration
+Data_base = [
+    {"id": 1, "title": "MacBook Pro"},
+    {"id": 2, "title": "iPhone"}
+]
+
+# Create a GET route
+# Endpoint: /post
+# status_code=226 means the API will return HTTP status 226
+@app.get("/post", status_code=226)
+def get_posts():
+    """
+    This function returns data from the database.
+    It will execute when someone visits:
+    http://localhost:8000/post
+    """
+
+    # Returning data as JSON
+    return {
+        "success": True,
+        "message": "Data fetched successfully",
+        "data": Data_base
+    }
