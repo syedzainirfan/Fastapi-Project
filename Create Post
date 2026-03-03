@@ -1,0 +1,41 @@
+from fastapi import FastAPI, status
+from pydantic import BaseModel
+from random import randrange
+
+# Create FastAPI app instance
+app = FastAPI()
+
+# Temporary in-memory database (list)
+Data_base = []
+
+
+# Define the data model for a Post using Pydantic
+class Post(BaseModel):
+    title: str
+    content: str
+    published: bool = True
+
+
+# Create a new post
+@app.post("/create-post", status_code=status.HTTP_201_CREATED)
+def create_post(post: Post):
+    """
+    Create a new post and store it in the database.
+
+    - Accepts post data in JSON format.
+    - Generates a random ID for the post.
+    - Stores the post in the in-memory list.
+    - Returns the created post data.
+    """
+
+    # Convert Pydantic model to dictionary
+    post_dict = post.dict()
+
+    # Generate a random ID for the post
+    post_dict["id"] = randrange(0, 1000000)
+
+    # Add post to the database list
+    Data_base.append(post_dict)
+
+    # Return created post
+    return {"data": post_dict}
