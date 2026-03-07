@@ -1,5 +1,5 @@
 # Import FastAPI class from fastapi package
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 # Create FastAPI application instance
 # This variable represents your web app
@@ -12,6 +12,13 @@ Data_base = [
     {"id": 2, "title": "iPhone"}
 ]
 
+# Function to find a post by ID
+def find_post(id):
+    for post in Data_base:
+        if post["id"] == id:
+            return post
+    return None
+
 # Create a GET route
 # Endpoint: /post
 # status_code=226 means the API will return HTTP status 226
@@ -22,10 +29,29 @@ def get_posts():
     It will execute when someone visits:
     http://localhost:8000/post
     """
-
     # Returning data as JSON
     return {
         "success": True,
         "message": "Data fetched successfully",
         "data": Data_base
+    }
+
+# Create a GET route with a dynamic path parameter
+@app.get("/post/{id}", status_code=302)
+def get_post(id: int):
+    """
+    This function returns a single post by ID.
+    It will execute when someone visits:
+    http://localhost:8000/post/{id}
+    """
+    post = find_post(id)
+    if not post:
+        # If no post is found, raise a 404 HTTP error
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    # Returning the found post
+    return {
+        "success": True,
+        "message": f"Post with ID {id} fetched successfully",
+        "data": post
     }
