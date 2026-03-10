@@ -1,0 +1,33 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List
+
+var1 = FastAPI()
+
+# Sample database (Replace this with your real database later)
+Data_base = [
+    {"id": 1, "title": "MacBook Pro"},
+    {"id": 2, "title": "iPhone"}
+]
+
+# Define a Pydantic model to validate the incoming post data
+class Post(BaseModel):
+    title: str
+
+# Function to find a post by ID and return its index
+def find_id(id: int):
+    # Loop through the database and find the index of the post
+    for index, post in enumerate(Data_base):
+        if post["id"] == id:
+            return index
+    return None  # Return None if the post is not found
+
+@var1.put("/post/{id}")
+def update_post(id: int, post: Post):
+    index = find_id(id)
+    if index is None:
+        raise HTTPException(status_code=404, detail="Post not found")
+    post_dict = post.dict()  # Convert the Pydantic model to a dictionary
+    post_dict['id'] = id  # Ensure the ID is included in the update
+    Data_base[index] = post_dict
+    return {"data": post_dict}
